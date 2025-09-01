@@ -20,6 +20,8 @@ import { moveStartMovieFilesToOutputFolder } from 'csdm/node/video/generation/mo
 import type { Sequence } from 'csdm/common/types/sequence';
 import type { VideoContainer } from 'csdm/common/types/video-container';
 import { fetchMatchPlayersSlots } from 'csdm/node/database/match/fetch-match-players-slots';
+import { server } from 'csdm/server/server';
+import { GameClientMessageName } from 'csdm/server/game-client-message-name';
 import { assertVideoGenerationIsPossible } from './assert-video-generation-is-possible';
 import { deleteSequencesRawFiles } from './delete-sequences-raw-files';
 import { uninstallCounterStrikeServerPlugin } from 'csdm/node/counter-strike/launcher/cs-server-plugin';
@@ -57,6 +59,7 @@ type Parameters = {
   signal: AbortSignal;
   onGameStart: () => void;
   onMoveFilesStart: () => void;
+  onSequenceRecordStart: (sequenceNumber: number) => void;
   onSequenceStart: (sequenceNumber: number) => void;
   onConcatenateSequencesStart: () => void;
 };
@@ -172,6 +175,11 @@ export async function generateVideo(parameters: Parameters) {
   }
   signal.addEventListener('abort', onAbort, { once: true });
 
+  const onGameSequenceStart = (sequenceNumber: number) => {
+    parameters.onSequenceRecordStart(sequenceNumber);
+  };
+  server.addGameMessageListener(GameClientMessageName.SequenceStart, onGameSequenceStart);
+
   await assertVideoGenerationIsPossible(parameters);
 
   throwIfAborted(signal);
@@ -274,6 +282,7 @@ export async function generateVideo(parameters: Parameters) {
     cleanupFiles();
     throw error;
   } finally {
+    server.removeGameEventListeners(GameClientMessageName.SequenceStart);
     await uninstallCounterStrikeServerPlugin(game);
   }
 }

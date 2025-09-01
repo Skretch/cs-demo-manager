@@ -126,6 +126,12 @@ class VideoQueue {
         onMoveFilesStart: () => {
           this.updateCurrentVideoAnNotifyRendererProcess({ status: VideoStatus.MovingFiles });
         },
+        onSequenceRecordStart: (sequenceNumber) => {
+          this.updateCurrentVideoAnNotifyRendererProcess({
+            status: VideoStatus.Recording,
+            currentSequence: sequenceNumber,
+          });
+        },
         onSequenceStart: (sequenceNumber) => {
           this.updateCurrentVideoAnNotifyRendererProcess({
             status: VideoStatus.Converting,
