@@ -112,6 +112,44 @@ describe('generate player kills sequences', () => {
     });
   });
 
+  it('should switch camera after the previous kill when kills happen rapidly', () => {
+    const firstKill = {
+      killerSteamId,
+      victimSteamId: firstVictimSteamId,
+      tick: 100,
+    } as Kill;
+    const secondKill = {
+      killerSteamId,
+      victimSteamId: secondVictimSteamId,
+      tick: 101,
+    } as Kill;
+
+    const match = {
+      ...baseMatch,
+      players: [killer, firstVictim, secondVictim],
+      kills: [firstKill, secondKill],
+    } as Match;
+
+    const sequences = buildPlayersEventSequences({
+      event: PlayerSequenceEvent.Kills,
+      match,
+      steamIds: [killerSteamId],
+      rounds: [],
+      perspective: Perspective.Enemy,
+      weapons: [],
+      settings: defaultSettings.video,
+      startSecondsBeforeEvent: 5,
+      endSecondsAfterEvent: 2,
+      firstSequenceNumber: 1,
+    });
+
+    expect(sequences.length).toBe(1);
+    const sequence = sequences[0];
+    expect(sequence.cameras.length).toBe(2);
+    expect(sequence.cameras[1].tick).toBeGreaterThan(firstKill.tick);
+    expect(sequence.cameras[1].tick).toBe(101);
+  });
+
   it('should generate a single sequence if next kills are too close to the first kill', () => {
     const firstKillWithDedicatedSequence = {
       killerSteamId,
