@@ -59,12 +59,17 @@ function getStatusMessage(video: Video) {
           <Trans>Waiting…</Trans>
         </p>
       );
-    case VideoStatus.Recording:
+    case VideoStatus.Recording: {
+      const number = video.currentSequence;
+      const sequenceCount = video.sequences.length;
       return (
         <p>
-          <Trans>In-game recording in progress…</Trans>
+          <Trans>
+            Recording sequence {number} / {sequenceCount}…
+          </Trans>
         </p>
       );
+    }
     case VideoStatus.MovingFiles:
       return (
         <p>
