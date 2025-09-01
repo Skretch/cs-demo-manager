@@ -6,13 +6,14 @@ import { buildAveragePlayerChartData } from './build-average-player-chart-data';
 import { useChart } from 'csdm/ui/hooks/use-chart';
 import { usePlayer } from '../use-player';
 import { roundNumber } from 'csdm/common/math/round-number';
+import { useOpenMatchOnPointDoubleClick } from './use-open-match-on-point-double-click';
 
 type Props = {
   axis: Axis;
 };
 
 export function HeadshotPercentageChart({ axis }: Props) {
-  const { chartsData } = usePlayer();
+  const { chartsData, matches } = usePlayer();
   const { t } = useLingui();
   const data: [string, number][] = buildAveragePlayerChartData({
     field: 'headshotPercentage',
@@ -47,8 +48,15 @@ export function HeadshotPercentageChart({ axis }: Props) {
     yLineParallelToXAxisValue: (maxValue + minValue) / 2,
   });
 
-  const { ref } = useChart({
+  const { ref, getChartInstance } = useChart({
     option: chartOptions,
+  });
+
+  useOpenMatchOnPointDoubleClick({
+    axis,
+    chartsData,
+    matches,
+    getChartInstance,
   });
 
   return <div className="w-full h-[352px]" ref={ref} />;
