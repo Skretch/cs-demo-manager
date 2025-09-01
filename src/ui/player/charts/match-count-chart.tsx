@@ -10,6 +10,7 @@ import { usePlayerChartOptions } from './use-player-chart-options';
 import { useChart } from 'csdm/ui/hooks/use-chart';
 import { usePlayer } from '../use-player';
 import { assertNever } from 'csdm/common/assert-never';
+import { useOpenMatchOnPointDoubleClick } from './use-open-match-on-point-double-click';
 
 type Props = {
   axis: Axis;
@@ -59,7 +60,7 @@ function buildChartData({ chartsData, axis }: { chartsData: PlayerChartsData[]; 
 }
 
 export function MatchCountChart({ axis }: Props) {
-  const { chartsData } = usePlayer();
+  const { chartsData, matches } = usePlayer();
   const { t } = useLingui();
   const data = buildChartData({ chartsData, axis });
 
@@ -91,8 +92,15 @@ export function MatchCountChart({ axis }: Props) {
     yLineParallelToXAxisValue: (maxValue + minValue) / 2,
   });
 
-  const { ref } = useChart({
+  const { ref, getChartInstance } = useChart({
     option: chartOptions,
+  });
+
+  useOpenMatchOnPointDoubleClick({
+    axis,
+    chartsData,
+    matches,
+    getChartInstance,
   });
 
   return <div className="w-full h-[352px]" ref={ref} />;

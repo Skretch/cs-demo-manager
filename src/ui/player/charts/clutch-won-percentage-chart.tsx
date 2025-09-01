@@ -5,13 +5,14 @@ import { usePlayerChartOptions } from './use-player-chart-options';
 import { buildAveragePlayerChartData } from './build-average-player-chart-data';
 import { useChart } from 'csdm/ui/hooks/use-chart';
 import { usePlayer } from '../use-player';
+import { useOpenMatchOnPointDoubleClick } from './use-open-match-on-point-double-click';
 
 type Props = {
   axis: Axis;
 };
 
 export function ClutchWonPercentageChart({ axis }: Props) {
-  const { chartsData } = usePlayer();
+  const { chartsData, matches } = usePlayer();
   const { t } = useLingui();
   const data: [string, number][] = buildAveragePlayerChartData({
     field: 'clutchWonPercentage',
@@ -46,8 +47,15 @@ export function ClutchWonPercentageChart({ axis }: Props) {
     yLineParallelToXAxisValue: (maxValue + minValue) / 2,
   });
 
-  const { ref } = useChart({
+  const { ref, getChartInstance } = useChart({
     option: chartOptions,
+  });
+
+  useOpenMatchOnPointDoubleClick({
+    axis,
+    chartsData,
+    matches,
+    getChartInstance,
   });
 
   return <div className="w-full h-[352px]" ref={ref} />;
