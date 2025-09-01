@@ -97,8 +97,9 @@ export function buildPlayersEventSequences({
       if (areSequencesOverlapping) {
         previousSequence.endTick = sequenceEndTick;
         if (perspective === Perspective.Enemy) {
+          const previousAction = playerEvents[index - 1]!;
           previousSequence.cameras.push({
-            tick: sequenceStartTick,
+            tick: Math.max(sequenceStartTick, previousAction.tick + 1),
             playerSteamId: steamIdToFocus,
             playerName: match.players.find((player) => player.steamId === steamIdToFocus)?.name ?? '',
           });

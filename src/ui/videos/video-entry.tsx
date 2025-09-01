@@ -310,11 +310,12 @@ export function VideoEntry({ video }: Props) {
             <ul>
               {video.sequences.map((sequence) => {
                 const [firstCamera] = sequence.cameras;
+                const isCurrentSequence = video.currentSequence === sequence.number;
 
                 return (
                   <li
                     key={sequence.number}
-                    className="grid grid-cols-[60px_100px_100px_100px_100px_100px_1fr] gap-4 border border-gray-200 p-4 last:rounded-b"
+                    className={`grid grid-cols-[60px_100px_100px_100px_100px_100px_1fr] gap-4 border border-gray-200 p-4 last:rounded-b ${isCurrentSequence ? 'bg-blue-100' : ''}`}
                   >
                     <p>{sequence.number}</p>
                     <p>{sequence.startTick}</p>
