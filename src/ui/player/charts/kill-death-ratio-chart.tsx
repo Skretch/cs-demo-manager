@@ -13,7 +13,7 @@ type Props = {
 };
 
 export function KillDeathRatioChart({ axis }: Props) {
-  const { chartsData, matches } = usePlayer();
+  const { chartsData } = usePlayer();
   const { t } = useLingui();
   const data: [string, number][] = buildAveragePlayerChartData({
     field: 'killDeathRatio',
@@ -55,7 +55,6 @@ export function KillDeathRatioChart({ axis }: Props) {
   useOpenMatchOnPointDoubleClick({
     axis,
     chartsData,
-    matches,
     getChartInstance,
   });
 

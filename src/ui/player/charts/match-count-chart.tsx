@@ -60,7 +60,7 @@ function buildChartData({ chartsData, axis }: { chartsData: PlayerChartsData[]; 
 }
 
 export function MatchCountChart({ axis }: Props) {
-  const { chartsData, matches } = usePlayer();
+  const { chartsData } = usePlayer();
   const { t } = useLingui();
   const data = buildChartData({ chartsData, axis });
 
@@ -99,7 +99,6 @@ export function MatchCountChart({ axis }: Props) {
   useOpenMatchOnPointDoubleClick({
     axis,
     chartsData,
-    matches,
     getChartInstance,
   });
 
