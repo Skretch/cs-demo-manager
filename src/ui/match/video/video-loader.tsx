@@ -5,6 +5,7 @@ import { usePathExists } from '../../hooks/use-path-exists';
 import { MatchVideo } from './video';
 import { UpdateDemoLocation } from './update-demo-location';
 import { RendererClientMessageName } from 'csdm/server/renderer-client-message-name';
+import { RendererServerMessageName } from 'csdm/server/renderer-server-message-name';
 import { Message } from 'csdm/ui/components/message';
 import { initializeVideoSuccess } from './video-actions';
 import { useWebSocketClient } from 'csdm/ui/hooks/use-web-socket-client';
@@ -12,6 +13,8 @@ import { useCurrentMatch } from '../use-current-match';
 import type { InitializeVideoPayload } from 'csdm/server/handlers/renderer-process/video/initialize-video-handler';
 import { ErrorCode } from 'csdm/common/error-code';
 import { isErrorCode } from 'csdm/common/is-error-code';
+import { videoUpdated } from 'csdm/ui/videos/videos-actions';
+import type { Video } from 'csdm/common/types/video';
 
 export function VideoLoader() {
   const client = useWebSocketClient();
@@ -20,6 +23,18 @@ export function VideoLoader() {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
   const demoExists = usePathExists(match.demoFilePath);
+
+  useEffect(() => {
+    const onVideoUpdated = (video: Video) => {
+      dispatch(videoUpdated(video));
+    };
+
+    client.on(RendererServerMessageName.VideoUpdated, onVideoUpdated);
+
+    return () => {
+      client.off(RendererServerMessageName.VideoUpdated, onVideoUpdated);
+    };
+  }, [client, dispatch]);
 
   useEffect(() => {
     const initialize = async () => {
