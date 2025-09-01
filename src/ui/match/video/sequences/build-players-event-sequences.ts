@@ -96,6 +96,13 @@ export function buildPlayersEventSequences({
       const areSequencesOverlapping = previousSequence.endTick + ticksRequiredBetweenTwoSequences >= sequenceStartTick;
       if (areSequencesOverlapping) {
         previousSequence.endTick = sequenceEndTick;
+        if (perspective === Perspective.Enemy) {
+          previousSequence.cameras.push({
+            tick: sequenceStartTick,
+            playerSteamId: steamIdToFocus,
+            playerName: match.players.find((player) => player.steamId === steamIdToFocus)?.name ?? '',
+          });
+        }
         continue;
       }
     }

@@ -21,6 +21,18 @@ const killer = {
   name: 'Killer name',
 } as MatchPlayer;
 
+const firstVictimSteamId = 'victim-steamId-1';
+const firstVictim = {
+  steamId: firstVictimSteamId,
+  name: 'First victim',
+} as MatchPlayer;
+
+const secondVictimSteamId = 'victim-steamId-2';
+const secondVictim = {
+  steamId: secondVictimSteamId,
+  name: 'Second victim',
+} as MatchPlayer;
+
 describe('generate player kills sequences', () => {
   it('should generate 1 sequence if there is only 1 kill', () => {
     const kill = {
@@ -52,6 +64,52 @@ describe('generate player kills sequences', () => {
     expect(sequence.number).toBe(1);
     expect(sequence.startTick).toBe(50);
     expect(sequence.endTick).toBe(120);
+  });
+
+  it('should add a camera for each kill when watching from the enemy perspective', () => {
+    const firstKill = {
+      killerSteamId,
+      victimSteamId: firstVictimSteamId,
+      tick: 3000,
+    } as Kill;
+    const secondKill = {
+      killerSteamId,
+      victimSteamId: secondVictimSteamId,
+      tick: 3100,
+    } as Kill;
+
+    const match = {
+      ...baseMatch,
+      players: [killer, firstVictim, secondVictim],
+      kills: [firstKill, secondKill],
+    } as Match;
+
+    const sequences = buildPlayersEventSequences({
+      event: PlayerSequenceEvent.Kills,
+      match,
+      steamIds: [killerSteamId],
+      rounds: [],
+      perspective: Perspective.Enemy,
+      weapons: [],
+      settings: defaultSettings.video,
+      startSecondsBeforeEvent: 5,
+      endSecondsAfterEvent: 2,
+      firstSequenceNumber: 1,
+    });
+
+    expect(sequences.length).toBe(1);
+    const sequence = sequences[0];
+    expect(sequence.cameras.length).toBe(2);
+    expect(sequence.cameras[0]).toEqual({
+      tick: 2950,
+      playerSteamId: firstVictimSteamId,
+      playerName: 'First victim',
+    });
+    expect(sequence.cameras[1]).toEqual({
+      tick: 3050,
+      playerSteamId: secondVictimSteamId,
+      playerName: 'Second victim',
+    });
   });
 
   it('should generate a single sequence if next kills are too close to the first kill', () => {
