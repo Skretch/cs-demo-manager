@@ -10,6 +10,7 @@ export async function fetchPlayerChartsData(steamId: string, filters: MatchFilte
       'headshot_percentage as headshotPercentage',
       'average_damage_per_round as averageDamagePerRound',
       'kill_death_ratio as killDeathRatio',
+      'players.match_checksum as matchChecksum',
     ])
     .leftJoin('matches', 'matches.checksum', 'players.match_checksum')
     .select(sql<string>`to_char(matches.date, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`.as('matchDate'))
@@ -24,7 +25,7 @@ export async function fetchPlayerChartsData(steamId: string, filters: MatchFilte
       ),
     ])
     .where('steam_id', '=', steamId)
-    .groupBy(['headshotPercentage', 'averageDamagePerRound', 'killDeathRatio', 'matches.date'])
+    .groupBy(['headshotPercentage', 'averageDamagePerRound', 'killDeathRatio', 'matchChecksum', 'matches.date'])
     .orderBy('date', 'asc');
 
   query = applyMatchFilters(query, filters);

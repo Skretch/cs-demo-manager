@@ -4,6 +4,7 @@ export type PlayerChartsData = {
   averageDamagePerRound: number;
   clutchWonPercentage: number;
   matchDate: string;
+  matchChecksum: string;
 };
 
-export type PlayerChartDataField = keyof Omit<PlayerChartsData, 'matchDate'>;
+export type PlayerChartDataField = keyof Omit<PlayerChartsData, 'matchDate' | 'matchChecksum'>;

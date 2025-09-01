@@ -13,7 +13,7 @@ type Props = {
 };
 
 export function AverageDamagePerRoundChart({ axis }: Props) {
-  const { chartsData, matches } = usePlayer();
+  const { chartsData } = usePlayer();
   const { t } = useLingui();
   const data: [string, number][] = buildAveragePlayerChartData({
     field: 'averageDamagePerRound',
@@ -55,7 +55,6 @@ export function AverageDamagePerRoundChart({ axis }: Props) {
   useOpenMatchOnPointDoubleClick({
     axis,
     chartsData,
-    matches,
     getChartInstance,
   });
 

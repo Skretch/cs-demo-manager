@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function ClutchWonPercentageChart({ axis }: Props) {
-  const { chartsData, matches } = usePlayer();
+  const { chartsData } = usePlayer();
   const { t } = useLingui();
   const data: [string, number][] = buildAveragePlayerChartData({
     field: 'clutchWonPercentage',
@@ -54,7 +54,6 @@ export function ClutchWonPercentageChart({ axis }: Props) {
   useOpenMatchOnPointDoubleClick({
     axis,
     chartsData,
-    matches,
     getChartInstance,
   });
 
